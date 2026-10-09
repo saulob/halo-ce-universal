@@ -21,10 +21,13 @@ and places the bitmap by its tag, so nothing else changes.
 bitmap group tag's name, its index there, and the CRC-32 of its first mip
 level's pixels as the English maps have them); coverage: a meter's, whose
 green is how much of each texel its shapes cover (the meter shader reads
-only its blue and alpha); title: the menus', a title (port/assets/titles,
-made by tools/title_assets.py) or a profile's Spartan picture
-(port/assets/spartans, made by tools/spartan_assets.py), drawn with
-display.high_res_text rather than display.high_res_hud */
+only its blue and alpha); point_threshold: its red
+holds exact discrete segment thresholds (zero in continuous meter sprites),
+read without filtering while blue, alpha and coverage retain their mips;
+title: a menu title (port/assets/titles, made by tools/title_assets.py) or a
+profile's Spartan picture (port/assets/spartans, made by
+tools/spartan_assets.py), drawn with display.high_res_text rather than
+display.high_res_hud */
 struct hud_hires_embedded
 {
 	const char *tag;
@@ -32,6 +35,7 @@ struct hud_hires_embedded
 	unsigned int width, height;
 	unsigned int crc;
 	int coverage;
+	int point_threshold; /* red: exact discrete meter thresholds, zero elsewhere */
 	int title;
 	const unsigned int *png;
 	unsigned int png_size;
@@ -62,5 +66,8 @@ all its mip levels, and their number; 0 if it could not be */
 unsigned int hud_hires_png_texture(const void *png, unsigned long size, unsigned long *levels);
 /* whether its green is its coverage (d3d8_gl.c, nv2a_psh.c: coverage_alpha) */
 int hud_hires_override_coverage(long asset);
+/* whether its red holds exact segment thresholds, read unfiltered (d3d8_gl.c,
+nv2a_psh.c: point_threshold) */
+int hud_hires_override_point_threshold(long asset);
 
 #endif
